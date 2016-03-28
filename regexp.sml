@@ -1,5 +1,10 @@
 structure Regexp: sig
-              type t
+              datatype t = Empty
+                         | Sym of string
+                         | Or of t * t
+                         | And of t * t
+                         | Rep of t
+
               val match: t -> string -> bool
           end
 = struct
@@ -36,17 +41,17 @@ structure Regexp: sig
     end
 
     fun splitNGen s n =
-      if n <= 0
+      if n <= 0 orelse (String.size s) < n
       then fn () => NONE
-      else if (String.size s) < n
-      then let val v = ref (SOME []) in
-               fn () => (let val ret = !v in v := NONE; ret end) end
+      (* else if  *)
+      (* then let val v = ref (SOME []) in *)
+      (*          fn () => (let val ret = !v in v := NONE; ret end) end *)
       else if n = 1
       then let val v = ref (SOME [s]) in
                fn () => (let val ret = !v in v := NONE; ret end) end
       else let
           val size = String.size(s)
-          val i = ref 0
+          val i = ref 1
           fun genGen () = splitNGen (String.substring(s, !i, (String.size s) - !i)) (n - 1)
           val gen = ref (genGen ())
           fun next () = let
