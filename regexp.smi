@@ -1,0 +1,12 @@
+_require "basis.smi"
+
+structure Regexp = struct
+    datatype t = Empty
+           | Sym of string
+           | Or of t * t
+           | And of t * t
+           | Rep of t
+
+    val match: t -> string -> bool
+end
+
